@@ -8,3 +8,4 @@ SMIF_Jarvis is an automation project for my graduate assistanship for a Universi
 - Perform data manipulation, calculate key portfolio statistics, and save records
 - Produce a daily report with biggest gainer/losers, portfolio metrics, and AUM data
 - Produce and distribute the daily report via email to student analysts and the portfolio director
+- Utilizing Git and GitHub, create a project that is accessible and can be developed in collaboration with analysts and future iterations of the endowment's management and staff
