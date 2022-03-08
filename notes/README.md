@@ -1,4 +1,4 @@
-# Notes
+# Notes to Self
 
 ### Scheduling recurring tasks
 [Martin Heinz](https://martinheinz.dev/blog/39)
