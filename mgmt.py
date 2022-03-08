@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from datetime import datetime
 import pickle
+import matplotlib.pyplot as plt
 
 # takes DataFrame of portfolio data
 # creating new DataFrame with security, base cost, and market value for all assets
@@ -29,7 +30,8 @@ def port_aum(ass_frame):
     aum = pd.DataFrame(entry)
     return aum
 
-def record_aum(new_entry):
+# update the aum pickle
+def update_aum(new_entry):
     rfile = open("aum.pickle","rb")
     aum_data = pickle.load(rfile)
     aum_record = pd.concat([aum_data,new_entry])
@@ -73,3 +75,23 @@ def aum_delta_per(aum_frame):
     last_pd = int(periods - 2)
     delta_per = (aum_lst[current_pd]/aum_lst[last_pd])-1
     return delta_per
+
+# takes aum_frame
+def aum_graph(aum_frame):
+    plt.figure(1)
+    plt.plot(aum_frame['AUM'], label='AUM')
+    plt.xlabel('Date')
+    plt.ylabel('AUM')
+    plt.title('AUM History')
+    plt.grid(True)
+    plt.legend()
+    return plt.show()
+
+# takes three DataFrames
+# creates report in the main file's designated path
+def gen_report(report_path, ass_frame, sec_frame, aum_frame):
+    with pd.ExcelWriter(report_path) as writer:
+        ass_frame.to_excel(writer, sheet_name='Assets')
+        sec_frame.to_excel(writer, sheet_name='Securities')
+        aum_frame.to_excel(writer, sheet_name='AUM_History')
+    return
