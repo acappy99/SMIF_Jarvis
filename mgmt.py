@@ -7,24 +7,25 @@ import matplotlib.pyplot as plt
 # takes DataFrame of portfolio data
 # creating new DataFrame with security, base cost, and market value for all assets
 def get_assets(ass):
+    ticker = pd.DataFrame(ass['Ticker'])
     asset_name = pd.DataFrame(ass['Security Description 1'])
     base_price = pd.DataFrame(ass['Base Cost'])
     market_price = pd.DataFrame(ass['Base Market Value'])
-    frames = [asset_name,base_price,market_price]
+    frames = [ticker,asset_name,base_price,market_price]
     result = pd.concat(frames, axis=1)
     return result
 
 # takes a dataframe of portfolio assets
 # returns a dataframe without non-security assets/liabilities
-def drop_fields(ass_frame, drop_lst):
-    sec_lst = ass_frame.drop(drop_lst)
-    return sec_lst
+def drop_non_sec(ass_frame):
+    sec_frame = ass_frame.dropna(subset='Ticker')
+    return sec_frame
 
 # takes dataframe of portfolio assets
 # returns DataFrame with the current date and assets under management
 def port_aum(ass_frame):
-    base_mv = ass_frame['Base Market Value'].tolist()
-    aum = sum(base_mv)
+    base_mkt_val = ass_frame['Base Market Value']
+    aum = round(base_mkt_val.sum(),2)
     today = datetime.today().strftime('%Y-%m-%d')
     entry = {"AUM": pd.Series(aum, index=[today])}
     aum = pd.DataFrame(entry)
@@ -46,7 +47,7 @@ def get_aum_record():
     aum_data = pickle.load(rfile)
     return aum_data
 
-# takes a date, file
+# for maintenance purposes takes a date, file
 # drops the date in file
 def drop_date(date,file):
     rfile = open(file,"rb")

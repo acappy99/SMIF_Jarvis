@@ -11,10 +11,17 @@ import mgmt
 report_path = '/Users/alexcappadona/Desktop/JARVIS/output/data.xlsx'
 aaa_path = '/Users/alexcappadona/Desktop/JARVIS/aaa/'
 
+# fun intro
 words = "Welcome to SMIF_Jarvis\n"
 for char in words:
     sleep(0.1)
     print(char, end='', flush=True)
+
+# Additions:
+#   * User option to add new file
+#   * Save current report as "today's report"
+#   * Save old "today's report" as yesterday's report
+#   * Check for bought or sold securuties by comparing today's and yesterday's reports
 
 print('')
 print('Asset and accrual')
@@ -78,21 +85,8 @@ if selection == 'y':
     mgmt.aum_graph(aum_frame)
 
 # Create DataFrame of only securities
-print('Create DataFrame of securities (y/n)')
-selection = input('>')
-print('')
-
-if selection == 'y':
-    print('Fields to drop, separated by enter, type "done" when finished.')
-    drop_lst = []
-    while True:
-        drops = input('>')
-        if drops == 'done':
-            break
-        drops = int(drops)
-        drop_lst.append(drops)
-    securities = mgmt.drop_fields(assets, drop_lst)
-    print(securities)
+securities = mgmt.drop_non_sec(assets)
+print(securities)
 
 print('')
 print('Generate report? (y/n)')
@@ -103,4 +97,4 @@ if selection == 'y':
         sleep(0.1)
         print(char, end='', flush=True)
     mgmt.gen_report(report_path, assets, securities, aum_frame)
-    print('Success')
+    print('Success. Output save at: '+report_path)
