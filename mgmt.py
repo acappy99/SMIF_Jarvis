@@ -9,16 +9,40 @@ import matplotlib.pyplot as plt
 def get_assets(ass):
     ticker = pd.DataFrame(ass['Ticker'])
     asset_name = pd.DataFrame(ass['Security Description 1'])
+    shares_par = pd.DataFrame(ass['Shares/Par'])
     base_price = pd.DataFrame(ass['Base Cost'])
     market_price = pd.DataFrame(ass['Base Market Value'])
-    frames = [ticker,asset_name,base_price,market_price]
+    frames = [ticker,asset_name,shares_par,base_price,market_price]
     result = pd.concat(frames, axis=1)
     return result
+
+# takes most recent asset_frame, save path, and as of data date
+# saves in asset_hist
+def save_asset_frame(asset_frame, asset_hist_path, date):
+    file_path = asset_hist_path+date+'_assets.xlsx'
+    asset_frame.to_excel(file_path)
+    return file_path
+
+# save asset_frame path to be opened later
+def save_ass_path(loc):
+    wfile = open("asspath.pickle","wb")
+    loc = loc
+    pickle.dump(loc,wfile)
+
+def get_ass_path():
+    rfile = open("asspath.pickle","rb")
+    assets = pickle.load(rfile)
+    return assets
+
+def save_yest_path(loc):
+    wfile = open("yestasspath.pickle","wb")
+    loc = loc
+    pickle.dump(loc,wfile)
 
 # takes a dataframe of portfolio assets
 # returns a dataframe without non-security assets/liabilities
 def drop_non_sec(ass_frame):
-    sec_frame = ass_frame.dropna(subset='Ticker')
+    sec_frame = ass_frame.dropna(subset=["Ticker"])
     return sec_frame
 
 # takes dataframe of portfolio assets
@@ -28,6 +52,14 @@ def port_aum(ass_frame):
     aum = round(base_mkt_val.sum(),2)
     today = datetime.today().strftime('%Y-%m-%d')
     entry = {"AUM": pd.Series(aum, index=[today])}
+    aum = pd.DataFrame(entry)
+    return aum
+
+# to override date
+def port_aum1(ass_frame,date):
+    base_mkt_val = ass_frame['Base Market Value']
+    aum = round(base_mkt_val.sum(),2)
+    entry = {"AUM": pd.Series(aum, index=[date])}
     aum = pd.DataFrame(entry)
     return aum
 
@@ -74,7 +106,7 @@ def aum_delta_per(aum_frame):
     periods = len(aum_lst)
     current_pd = int(periods - 1)
     last_pd = int(periods - 2)
-    delta_per = (aum_lst[current_pd]/aum_lst[last_pd])-1
+    delta_per = round((aum_lst[current_pd]/aum_lst[last_pd])-1,2)
     return delta_per
 
 # takes aum_frame
