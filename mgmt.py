@@ -20,24 +20,28 @@ def get_assets(ass):
 # saves in asset_hist
 def save_asset_frame(asset_frame, asset_hist_path, date):
     file_path = asset_hist_path+date+'_assets.xlsx'
-    asset_frame.to_excel(file_path)
+    asset_frame.to_excel(file_path, index=False)
     return file_path
 
-# save asset_frame path to be opened later
+# most recent asset data
 def save_ass_path(loc):
     wfile = open("asspath.pickle","wb")
     loc = loc
     pickle.dump(loc,wfile)
-
 def get_ass_path():
     rfile = open("asspath.pickle","rb")
     assets = pickle.load(rfile)
     return assets
 
+# yesterday's asset data
 def save_yest_path(loc):
     wfile = open("yestasspath.pickle","wb")
     loc = loc
     pickle.dump(loc,wfile)
+def get_yest_path():
+    rfile = open("yestasspath.pickle","rb")
+    assets = pickle.load(rfile)
+    return assets
 
 # takes a dataframe of portfolio assets
 # returns a dataframe without non-security assets/liabilities
@@ -47,11 +51,10 @@ def drop_non_sec(ass_frame):
 
 # takes dataframe of portfolio assets
 # returns DataFrame with the current date and assets under management
-def port_aum(ass_frame):
+def port_aum(ass_frame, date):
     base_mkt_val = ass_frame['Base Market Value']
     aum = round(base_mkt_val.sum(),2)
-    today = datetime.today().strftime('%Y-%m-%d')
-    entry = {"AUM": pd.Series(aum, index=[today])}
+    entry = {"AUM": pd.Series(aum, index=[date])}
     aum = pd.DataFrame(entry)
     return aum
 

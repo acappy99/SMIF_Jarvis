@@ -2,7 +2,7 @@ import sys
 from time import sleep
 import numpy as np
 import pandas as pd
-import datetime as datetime
+import datetime
 import pickle
 import matplotlib.pyplot as plt
 import mgmt
@@ -44,18 +44,20 @@ if selection == 1:
     loc = aaa_path+fname
     ass = pd.read_excel(loc)
     assets = mgmt.get_assets(ass)
-    path = mgmt.save_asset_frame(assets, asset_hist_path, date)
+    mgmt.save_asset_frame(assets, asset_hist_path, date)
 
     #3. replaces asset path with latest info
-    mgmt.save_ass_path(path)
-    curr_aum = mgmt.port_aum(assets)
+    loc = asset_hist_path+date+'_assets.xlsx'
+    mgmt.save_ass_path(loc)
+    curr_aum = mgmt.port_aum(assets, date)
     mgmt.update_aum(curr_aum)
 
 if selection == 2:
     print('')
+    today = str(datetime.date.today())
     xlsx = pd.ExcelFile(mgmt.get_ass_path())
     assets = pd.read_excel(xlsx)
-    curr_aum = mgmt.port_aum(assets)
+    curr_aum = mgmt.port_aum(assets, today)
 
 
 words = "Asset detail...\n"
@@ -80,7 +82,7 @@ print('One day change in portfolio AUM:')
 print('$'+aum_chg)
 print(aum_pchg+'%')
 
-words = "Generating AUM chart\n"
+words = "Generating AUM chart\n\n"
 for char in words:
     sleep(0.1)
     print(char, end='', flush=True)
@@ -90,7 +92,6 @@ mgmt.aum_graph(aum_frame)
 
 print('0 - Exit')
 print('1 - Generate Report')
-print('')
 print('')
 
 # User input with data validation
